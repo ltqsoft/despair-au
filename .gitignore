@@ -12,3 +12,5 @@ _deps
 
 _build-*
 obj
+./*.cbp
+./*.layout

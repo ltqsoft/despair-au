@@ -1,17 +1,20 @@
 //#include "pch.h"
 #include "despair-au.hpp"
+#include <vorbis/vorbisfile.h>
+#include <AL/al.h>
+#include <iostream>
+
+#define OGG_BUFFER_BLOCK_SIZE 1024
 
 
-despair_au::err despair_au::load_ogg(const string& wFilePath)
+despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, buf_info& wInfo)
 {
-    endian_t endian = get_endian();
+    endian_t endian = _THIS::getEndian();
     if(endian == little_endian) {
         std::cout << "endian=little\n";
     } else {
         std::cout << "endian=big\n";
     }
-
-    ALbuffer_T alBuffer;
 
     int bitStream = -1;
     long bytes = 0;
@@ -19,11 +22,11 @@ despair_au::err despair_au::load_ogg(const string& wFilePath)
     int channels = 0;
     std::vector<char> alBuf;
 
-    FILE* fp = fopen(OGG_FILE, "rb");
+    FILE* fp = fopen(wFilePath.c_str(), "rb");
     if(fp == nullptr)
     {
         std::cerr << "OGG file opening failed!\n";
-        return 1;
+        return err::file_not_found;
     }
 
     vorbis_info* pInfo;
@@ -31,16 +34,16 @@ despair_au::err despair_au::load_ogg(const string& wFilePath)
     if(ov_open(fp, &oggFile, nullptr, 0))
     {
         std::cerr << "Error reading file with Vorbis API!\n";
-        return 2;
+        return err::file_api_convert;
     }
 
     pInfo = ov_info(&oggFile, -1);
     channels = pInfo->channels;
-    int bitsPerSample = 16;
+    constexpr int bitsPerSample = 16;
 
-    if(pInfo->channels == 1) { alBuffer.format = AL_FORMAT_MONO16; }
-    else { alBuffer.format = AL_FORMAT_STEREO16; }
-    alBuffer.frequency = pInfo->rate;
+    if(pInfo->channels == 1) { wInfo.format = AL_FORMAT_MONO16; }
+    else { wInfo.format = AL_FORMAT_STEREO16; }
+    wInfo.frequency = pInfo->rate;
 
     do
     {
@@ -49,7 +52,7 @@ despair_au::err despair_au::load_ogg(const string& wFilePath)
         {
             ov_clear(&oggFile);
             std::cerr << "ov_read error!\n";
-            return 3;
+            return err::ogg_hole;
         }
         alBuf.insert(alBuf.end(), array, array+bytes);
 
@@ -57,6 +60,18 @@ despair_au::err despair_au::load_ogg(const string& wFilePath)
 
     ov_clear(&oggFile);
 
-
     return _THIS::err::none;
+}
+
+
+despair_au::err despair_au::load_wav(const string& wFilePath)
+{
+    return _THIS::err::none;
+}
+
+
+despair_au::endian_t despair_au::getEndian()
+{
+    uint16_t i = 1;
+	return (*(char*)&i == '\0');
 }

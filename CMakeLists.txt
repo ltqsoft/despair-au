@@ -12,16 +12,21 @@ endif()
 
 project(despair-au VERSION 1.0)
 
-add_library(despair-au src/despair-au.cpp)
+add_library( despair-au src/despair-au.cpp )
 
-#target_include_directories(despair-au PUBLIC
-#    "${PROJECT_SOURCE_DIR}/include"
-#    )
+target_include_directories( despair-au PUBLIC
+    "${PROJECT_SOURCE_DIR}/include"
+    )
 
-add_executable(example examples/example.cpp)
+add_executable( example examples/example.cpp )
 
 target_include_directories(example PUBLIC
     "${PROJECT_SOURCE_DIR}/include"
     )
 
-target_link_libraries(example PUBLIC despair-au)
+target_link_libraries( example
+    PUBLIC despair-au
+    PRIVATE vorbisfile
+    PRIVATE vorbis
+    PRIVATE ogg
+    )
