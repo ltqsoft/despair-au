@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1605237423 source:/home/hanazawa/Documents/cb-20.03/despair-au/src/despair-au.cpp
+	"despair-au.hpp"
+
+1605237395 /home/hanazawa/Documents/cb-20.03/despair-au/include/despair-au.hpp
+	<string>
+
