@@ -20,7 +20,7 @@ despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, bu
     long bytes = 0;
     char array[OGG_BUFFER_BLOCK_SIZE];
     int channels = 0;
-    std::vector<char> alBuf;
+    //std::vector<char> alBuf;
 
     FILE* fp = fopen(wFilePath.c_str(), "rb");
     if(fp == nullptr)
@@ -54,7 +54,7 @@ despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, bu
             std::cerr << "ov_read error!\n";
             return err::ogg_hole;
         }
-        alBuf.insert(alBuf.end(), array, array+bytes);
+        wData.insert(wData.end(), array, array+bytes);
 
     } while(bytes > 0);
 

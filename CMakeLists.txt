@@ -25,6 +25,13 @@ if( WIN32 )
 endif()
 
 
+if( WIN32 )
+    set( OPENAL_LIB_NAME "OpenAL32" )
+else()
+    set( OPENAL_LIB_NAME "openal" )
+endif()
+
+
 #-- Project and targets -----------------------------------------------------------------
 
 
@@ -56,4 +63,5 @@ target_link_libraries( example
     PUBLIC vorbisfile
     PUBLIC vorbis
     PUBLIC ogg
+    PUBLIC ${OPENAL_LIB_NAME}
     )
