@@ -30,3 +30,5 @@ target_link_libraries( example
     PRIVATE vorbis
     PRIVATE ogg
     )
+
+add_custom_target( neverbuild SOURCES include/despair-au.hpp )

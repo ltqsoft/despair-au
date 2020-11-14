@@ -16,7 +16,7 @@ despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, bu
         std::cout << "endian=big\n";
     }
 
-    int bitStream = -1;
+
     long bytes = 0;
     char array[OGG_BUFFER_BLOCK_SIZE];
     int channels = 0;
@@ -29,7 +29,6 @@ despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, bu
         return err::file_not_found;
     }
 
-    vorbis_info* pInfo;
     OggVorbis_File oggFile;
     if(ov_open(fp, &oggFile, nullptr, 0))
     {
@@ -37,7 +36,7 @@ despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, bu
         return err::file_api_convert;
     }
 
-    pInfo = ov_info(&oggFile, -1);
+    const vorbis_info* pInfo = ov_info(&oggFile, -1);
     channels = pInfo->channels;
     constexpr int bitsPerSample = 16;
 
@@ -47,6 +46,7 @@ despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, bu
 
     do
     {
+        int bitStream ;//= -1;
         bytes = ov_read(&oggFile, array, OGG_BUFFER_BLOCK_SIZE, endian, 2, 1, &bitStream);
         if(bytes < 0)
         {
