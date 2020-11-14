@@ -2,9 +2,41 @@
 #include "despair-au.hpp"
 #include <vorbis/vorbisfile.h>
 #include <AL/al.h>
+#include <AL/alc.h>
 #include <iostream>
 
 #define OGG_BUFFER_BLOCK_SIZE 1024
+
+
+static struct {
+    ALCdevice*  dev = nullptr;
+    ALCcontext* ctx = nullptr;
+} __alContext;
+
+
+despair_au::err despair_au::init()
+{
+    __alContext.dev = alcOpenDevice(nullptr);
+    if(__alContext.dev == nullptr) { return err::audio_device; }
+
+    __alContext.ctx = alcCreateContext(__alContext.dev, nullptr);
+    if(__alContext.ctx == nullptr)
+    {
+        alcCloseDevice(__alContext.dev);
+        return err::context;
+    }
+    alcMakeContextCurrent(__alContext.ctx);
+
+    return err::none;
+}
+
+
+void despair_au::terminate()
+{
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(__alContext.ctx);
+    alcCloseDevice(__alContext.dev);
+}
 
 
 despair_au::err despair_au::load_ogg(const string& wFilePath, i8array& wData, buf_info& wInfo)
@@ -74,4 +106,10 @@ despair_au::endian_t despair_au::getEndian()
 {
     uint16_t i = 1;
 	return (*(char*)&i == '\0');
+}
+
+
+void despair_au::listener_pos(float3 wPos)
+{
+    alListenerfv(AL_POSITION, wPos);
 }

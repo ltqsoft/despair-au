@@ -61,6 +61,7 @@ endif()
 # target/despari-au
 add_library( despair-au
     src/despair-au.cpp
+    src/despair-au-al-source.cpp
     )
 
 target_include_directories( despair-au
