@@ -77,3 +77,19 @@ void despair_au::al_source::stop()
 {
     alSourceStop(id_);
 }
+
+
+despair_au::norm32 despair_au::al_source::volume() const
+{
+    norm32 ret;
+    alGetSourcef(id_, AL_GAIN, &ret);
+    return ret;
+}
+
+
+void despair_au::al_source::volume(norm32 wValue)
+{
+    if(wValue > 1.0f) wValue = 1.0f;
+    else if(wValue < 0.0f) wValue = 0.0f;
+    alSourcef(id_, AL_GAIN, wValue);
+}

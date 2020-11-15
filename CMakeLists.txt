@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.18)
 
 #-- Preprocess ----------------------------------------------------------------------------
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
     message( FATAL_ERROR "Binary directory should not be the same as source directory, please specify a different one!" )
@@ -12,22 +14,17 @@ set( OPENAL_LIB_NAME "openal" )
 
 if( WIN32 )
     set( OPENAL_LIB_NAME                "OpenAL32" )
-    set( CMAKE_PREFIX_PATH              "C:/dev"    CACHE STRING "Where to find include and lib directory, use if you put all your libraries in same place." )
-    set( CMAKE_FIND_LIBRARY_PREFIXES    "C:/dev"    CACHE STRING "Where to find dependeny libraries" )
-    set( CMAKE_FIND_LIBRARY_SUFFIXES    ".a"        CACHE STRING "Library extensions" )
-
-    find_library(AL_LIBRARY
-        NAMES OPENAL_LIB_NAME
-        HINTS "${CMAKE_PREFIX_PATH}/lib"
-    )
+    set( CMAKE_FIND_LIBRARY_PREFIXES    "lib" )
+    set( CMAKE_FIND_LIBRARY_SUFFIXES    ".a;.dll.a;.so" )
 endif() #WIN32
+
+find_package( OpenAL REQUIRED )
+find_package( ogg REQUIRED )
+find_package( vorbis REQUIRED )
 
 
 #-- CMake Options -------------------------------------------------------------------------
 
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if( WIN32 )
     set( CMAKE_INSTALL_PREFIX "C:/dev" CACHE STRING "Target directory for installation." )
@@ -42,8 +39,8 @@ endif()
 
 # set(SYSTEM_INCLUDE_PATH "What" CACHE STRING "System include path" )
 if( WIN32 )
-    set( WIN32_SYSTEM_INCLUDE_PATH "C:/dev/include" CACHE STRING "System default include path.")
-    set( WIN32_SYSTEM_LIBRARY_PATH "C:/dev/lib" CACHE STRING "System default library path." )
+    set( WIN32_SYSTEM_INCLUDE_PATH "C:/dev/include" CACHE STRING "System default include path." )
+    set( WIN32_SYSTEM_LIBRARY_PATH "C:/dev/lib"     CACHE STRING "System default library path." )
 endif()
 
 

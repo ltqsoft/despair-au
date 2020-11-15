@@ -14,6 +14,9 @@ static struct {
 } __alContext;
 
 
+float despair_au::listenerPos_[] = { 0.0f, 0.0f, 0.0f };
+
+
 despair_au::err despair_au::init()
 {
     __alContext.dev = alcOpenDevice(nullptr);
@@ -109,7 +112,30 @@ despair_au::endian_t despair_au::getEndian()
 }
 
 
+despair_au::float3 despair_au::listener_pos()
+{
+    alGetListenerfv(AL_POSITION, listenerPos_);
+    return listenerPos_;
+}
+
+
 void despair_au::listener_pos(float3 wPos)
 {
     alListenerfv(AL_POSITION, wPos);
+}
+
+
+despair_au::norm32 despair_au::master_volume()
+{
+    norm32 ret;
+    alGetListenerf(AL_GAIN, &ret);
+    return ret;
+}
+
+
+void despair_au::master_volume(norm32 wValue)
+{
+    if(wValue > 1.0f) wValue = 1.0f;
+    else if(wValue < 0.0f) wValue = 0.0f;
+    alListenerf(AL_GAIN, wValue);
 }
