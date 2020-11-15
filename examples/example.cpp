@@ -22,8 +22,12 @@ int main()
     {
         std::cerr << "Failed loading OGG file!\n";
         return ERR_OGG_LOAD;
-    } else {
-        std::cout << "Buffer data size: " << buffer.size() << '\n';
+    } else
+    {
+        std::cout <<
+            "Buffer data size: " << buffer.size() <<
+            " bytes (" << static_cast<double>(buffer.size()) / 1024.0 <<
+            ").\n";
     }
 
     despair_au::al_source source;

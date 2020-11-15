@@ -11,16 +11,20 @@ if( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
 endif()
 
 set( OPENAL_LIB_NAME "openal" )
+set( CMAKE_FIND_LIBRARY_PREFIXES    "lib" )
+set( CMAKE_FIND_LIBRARY_SUFFIXES    ".a;.dll.a;.so" )
+
 
 if( WIN32 )
     set( OPENAL_LIB_NAME                "OpenAL32" )
-    set( CMAKE_FIND_LIBRARY_PREFIXES    "lib" )
-    set( CMAKE_FIND_LIBRARY_SUFFIXES    ".a;.dll.a;.so" )
+    find_package( ogg REQUIRED )
+    find_package( vorbis REQUIRED )
+    find_package( ${OPENAL_LIB_NAME} REQUIRED )
+else()
+    find_library( FIND_OGG "ogg" NAMES "ogg" "Ogg" )
+    find_library( FIND_VORBIS "vorbis" NAMES "vorbis" "Vorbis" )
+    find_library( FIND_OPENAL "openal" NAMES "openal" "OpenAL" )
 endif() #WIN32
-
-find_package( OpenAL REQUIRED )
-find_package( ogg REQUIRED )
-find_package( vorbis REQUIRED )
 
 
 #-- CMake Options -------------------------------------------------------------------------
