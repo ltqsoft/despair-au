@@ -8,6 +8,20 @@ if( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
     message( FATAL_ERROR "Binary directory should not be the same as source directory, please specify a different one!" )
 endif()
 
+set( OPENAL_LIB_NAME "openal" )
+
+if( WIN32 )
+    set( OPENAL_LIB_NAME                "OpenAL32" )
+    set( CMAKE_PREFIX_PATH              "C:/dev"    CACHE STRING "Where to find include and lib directory, use if you put all your libraries in same place." )
+    set( CMAKE_FIND_LIBRARY_PREFIXES    "C:/dev"    CACHE STRING "Where to find dependeny libraries" )
+    set( CMAKE_FIND_LIBRARY_SUFFIXES    ".a"        CACHE STRING "Library extensions" )
+
+    find_library(AL_LIBRARY
+        NAMES OPENAL_LIB_NAME
+        HINTS "${CMAKE_PREFIX_PATH}/lib"
+    )
+endif() #WIN32
+
 
 #-- CMake Options -------------------------------------------------------------------------
 
@@ -33,13 +47,6 @@ if( WIN32 )
 endif()
 
 
-if( WIN32 )
-    set( OPENAL_LIB_NAME "OpenAL32" )
-else()
-    set( OPENAL_LIB_NAME "openal" )
-endif()
-
-
 #-- Project and targets -----------------------------------------------------------------
 
 
@@ -52,7 +59,9 @@ endif()
 
 
 # target/despari-au
-add_library( despair-au src/despair-au.cpp )
+add_library( despair-au
+    src/despair-au.cpp
+    )
 
 target_include_directories( despair-au
     PUBLIC "${PROJECT_SOURCE_DIR}/include"
@@ -60,7 +69,9 @@ target_include_directories( despair-au
 
 
 # targets/example-program
-add_executable( example examples/example.cpp )
+add_executable( example
+    examples/example.cpp
+    )
 
 target_include_directories(example PUBLIC
     "${PROJECT_SOURCE_DIR}/include"
@@ -76,4 +87,7 @@ target_link_libraries( example
 
 
 # targets/non-build
-add_custom_target( neverbuild SOURCES include/despair-au.hpp )
+add_custom_target( neverbuild SOURCES
+    include/despair-au.hpp
+    README.md
+    )
