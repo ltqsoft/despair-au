@@ -57,6 +57,9 @@ public:
     static err load_ogg(const string& wFilePath, i8array& wData, buf_info& wInfo);
     static err load_wav(const string& wFilePath);
 
+    static void play(const al_source& wSource);
+    static void play(const al_source& wSource, const al_source& wSourceToShutUp);
+
     static float3 listener_pos();               //$ getter
     static void listener_pos(float3 wPos);      //$ setter
     static norm32 master_volume();              //$ getter
