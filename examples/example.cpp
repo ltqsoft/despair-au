@@ -2,8 +2,8 @@
 #include <iostream>
 
 #define OGG_FILE "../examples/LoL_LoginScreenIntro_6.10.ogg"
-#define ERR_INIT            1
-#define ERR_OGG_LOAD        2
+#define ERR_INIT           1
+#define ERR_OGG_LOAD       2
 
 
 int main()
