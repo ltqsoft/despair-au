@@ -7,6 +7,8 @@ set( CMAKE_CXX_STANDARD             11              )
 set( CMAKE_CXX_STANDARD_REQUIRED    True            )
 set( CMAKE_FIND_LIBRARY_PREFIXES    "lib"           )
 set( CMAKE_FIND_LIBRARY_SUFFIXES    ".a;.dll.a;.so" )
+set( CMAKE_USE_RELATIVE_PATHS       True            )
+set_property(GLOBAL PROPERTY USE_FOLDERS True)
 
 set ( DEFAULT_CMAKE_INSTALL_PREFIX_PENGU "/usr/local"   )
 set ( DEFAULT_CMAKE_INSTALL_PREFIX_WIN32 "C:/dev"       )
@@ -47,6 +49,37 @@ if( WIN32 )
     set( WIN32_CENTRALIZED_PACKAGES_PATH "C:/dev" CACHE STRING "If you follow linux library structure, you can specify include/lib path for all of them here." )
 endif()
 
+function(dpau_add_exe)
+    set( TargetName     ${ARGV0} )
+    set( TargetGroup    ${ARGV1} )
+    
+    set(temp0)
+    set(temp1)
+    set(temp2)
+    cmake_parse_arguments(
+        PARSE_ARGV 2 srcFiles "${temp0}" "${temp1}" "${temp2}"
+    )
+
+    add_executable( ${TargetName} )
+    foreach( arg IN LISTS srcFiles_UNPARSED_ARGUMENTS )
+        target_sources( ${TargetName} PUBLIC "${arg}" )
+    endforeach()
+
+    target_include_directories( ${TargetName}
+        PUBLIC "include"
+    )
+    target_link_libraries( ${TargetName}
+        PUBLIC despair-au
+        PUBLIC vorbisfile
+        PUBLIC vorbis
+        PUBLIC ogg
+        PUBLIC ${OPENAL_LIB_NAME}
+    )
+    if( NOT "${TargetGroup}" STREQUAL "_no_group" )
+        set_target_properties( ${TargetName} PROPERTIES FOLDER ${TargetGroup} )
+    endif()
+endfunction()
+
 
 #-- Project and targets -----------------------------------------------------------------
 
@@ -73,38 +106,62 @@ link_directories( ${GLOBAL_LIBRARY_PATH} )
 
 # target/despari-au
 add_library( despair-au
-    src/despair-au.cpp
-    src/despair-au-al-source.cpp
-    )
-
+    "src/despair-au.cc"
+    "src/despair-au-al-source.cc"
+    "src/m3u.cc"
+)
+target_precompile_headers( despair-au
+    PUBLIC "src/despair-au-pch.hh"
+)
 target_include_directories( despair-au
-    PUBLIC "${PROJECT_SOURCE_DIR}/include"
-    )
+    PUBLIC "include/${PROJECT_NAME}"
+)
 
 
-# targets/example-program
-add_executable( example
-    examples/example.cpp
-    )
+# # targets/example-program
+# add_executable( example
+#     examples/example.cc
+# )
+# target_include_directories(example PUBLIC
+#     "include"
+# )
+# target_link_libraries( example
+#     PUBLIC despair-au
+#     PUBLIC vorbisfile
+#     PUBLIC vorbis
+#     PUBLIC ogg
+#     PUBLIC ${OPENAL_LIB_NAME}
+# )
+# set_target_properties( example
+#     PROPERTIES FOLDER examples
+# )
+dpau_add_exe( example examples examples/example.cc )
 
-target_include_directories(example PUBLIC
-    "${PROJECT_SOURCE_DIR}/include"
-    )
 
-target_link_libraries( example
-    PUBLIC despair-au
-    PUBLIC vorbisfile
-    PUBLIC vorbis
-    PUBLIC ogg
-    PUBLIC ${OPENAL_LIB_NAME}
-    )
-
+# # targets/example/m3u
+# add_executable( eg_m3u
+#     examples/eg_m3u.cc
+# )
+# target_include_directories(eg_m3u PUBLIC
+#     "include"
+# )
+# target_link_libraries( eg_m3u
+#     PUBLIC despair-au
+#     PUBLIC vorbisfile
+#     PUBLIC vorbis
+#     PUBLIC ogg
+#     PUBLIC ${OPENAL_LIB_NAME}
+# )
+# set_target_properties( eg_m3u
+#     PROPERTIES FOLDER examples
+# )
+dpau_add_exe( eg_m3u examples examples/eg_m3u.cc )
 
 # targets/non-build
 add_custom_target( neverbuild SOURCES
-    include/despair-au.hpp
+    include/despair-au/despair-au.hh
     README.md
-    )
+)
 
 
 #-- Install section ---------------------------------------------------------------------
@@ -123,3 +180,5 @@ if( WIN32 )
     message( STATUS "win32/inc-path: ${WIN32_CENTRALIZED_INCLUDE_PATH}" )
     message( STATUS "win32/lib-path: ${WIN32_CENTRALIZED_LIBRARY_PATH}" )
 endif() #WIN32
+
+#dpau_add_exe(targ name1 name2 name3)
