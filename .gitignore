@@ -12,5 +12,6 @@ _deps
 
 _build-*
 obj
-./*.cbp
-./*.layout
+/*.cbp
+/*.layout
+/.vscode/c_cpp_properties.json
